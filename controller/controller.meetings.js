@@ -59,11 +59,29 @@ exports.createRoom = async (req, res) => {
       owner: offer.owner,
       name: offer.name,
       url,
-      invited: req.body.invited,
-      startTime,
+      invited: req.params.invited,
+      startTime: req.body.startTime,
     });
     await newMeetings.save();
     return response.json(newMeetings);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: err.message });
+  }
+};
+exports.getMeetingInvited = async (req, res) => {
+  try {
+    const mettings = await Meeting.find({ invited: req.id });
+    return res.status(200).json(mettings);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: err.message });
+  }
+};
+exports.getMeetingOwner = async (req, res) => {
+  try {
+    const mettings = await Meeting.find({ owner: req.id });
+    return res.status(200).json(mettings);
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: err.message });
