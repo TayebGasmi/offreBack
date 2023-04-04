@@ -25,6 +25,7 @@ const {
   getAccepted,
   getAllOffers,
   searchOffers,
+  getCompanyOffer,
 } = require("../controller/controller.offre");
 router.delete(
   "/:offreId",
@@ -83,6 +84,7 @@ router.put(
   verifyDoc(Users, "userId"),
   unacceptApplier("offerId", "userId")
 );
+router.get("/company", authorize(COMPANY), getCompanyOffer);
 router.get("/accepted/:offerId", verifyDoc(Offres, "offerId"), getAccepted);
 router.get("/all", getAllOffers);
 router.put("/search", validate(offerSearch), searchOffers);

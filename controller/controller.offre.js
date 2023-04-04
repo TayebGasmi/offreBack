@@ -164,20 +164,7 @@ const getAccepted = async (req, res) => {
 };
 const getAllOffers = async (req, res) => {
   try {
-    const { search } = req.query;
-    let filterQuery = { valid: true };
-    if (search) {
-      filterQuery = {
-        ...filterQuery,
-        $or: [
-          { name: { $regex: search } },
-          { description: { $regex: search } },
-          { category: { $regex: search } },
-          { mode: { $regex: search } },
-        ],
-      };
-    }
-    const offers = await Offres.find(filterQuery)
+    const offers = await Offres.find({})
       .populate({ path: "owner", select: offerOwner })
       .select(offerDetails)
       .lean()
@@ -222,6 +209,19 @@ const searchOffers = async (req, res) => {
     return res.status(500).json({ error: err.message });
   }
 };
+const getCompanyOffer = async (req, res) => {
+  try {
+    const offers = await Offres.find({ owner: req.id })
+      .populate({ path: "owner", select: offerOwner })
+      .select(offerDetails)
+      .lean()
+      .exec();
+    if (offers.length === 0) return res.status(204).json(offers);
+    return res.status(200).json(offers);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+};
 
 module.exports = {
   addOffre,
@@ -237,4 +237,5 @@ module.exports = {
   invalidOffre,
   getAllOffers,
   searchOffers,
+  getCompanyOffer,
 };
